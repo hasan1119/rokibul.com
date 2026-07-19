@@ -2400,6 +2400,15 @@ h6 {
   color: var(--text-faint);
 }
 
+.contact-form-status {
+  min-height: 22px;
+}
+
+#contact-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
 .contact-info-box a,
 .footer-link {
   color: var(--text-soft) !important;
