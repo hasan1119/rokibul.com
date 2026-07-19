@@ -1,0 +1,54 @@
+name: Deploy rokibul.com
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-rokibul-com
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy static site
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - hasan-vps
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync site files
+        run: |
+          set -euo pipefail
+
+          DEPLOY_DIR="/opt/rokibul.com/public"
+          mkdir -p "$DEPLOY_DIR"
+
+          rsync -az --delete \
+            --exclude ".git/" \
+            --exclude ".github/" \
+            --exclude ".gitignore" \
+            --exclude "vercel.json" \
+            ./ "$DEPLOY_DIR/"
+
+      - name: Reload nginx
+        run: |
+          set -euo pipefail
+
+          if docker ps --format '{{.Names}}' | grep -qx 'ekb-mail-nginx'; then
+            docker exec ekb-mail-nginx nginx -t
+            docker exec ekb-mail-nginx nginx -s reload
+          fi
+
+      - name: Verify deployment
+        run: |
+          set -euo pipefail
+
+          test -f /opt/rokibul.com/public/index.html
+          curl -fsSIL --max-time 20 https://rokibul.com/ | head
