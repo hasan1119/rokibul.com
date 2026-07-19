@@ -2205,6 +2205,14 @@ h6 {
   color: var(--text-main) !important;
 }
 
+.custom-nav.stickyadd .logo .logo-light {
+  display: inline-block;
+}
+
+.custom-nav.stickyadd .logo .logo-dark {
+  display: none;
+}
+
 .header-bg-img {
   background-image:
     linear-gradient(120deg, rgba(7, 10, 14, 0.88), rgba(16, 20, 25, 0.58)),
